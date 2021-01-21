@@ -1,2 +1,2 @@
 # MAS-Platform-C
-A mas development platform made in C
+A MAS development platform made in C
