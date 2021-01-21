@@ -15,8 +15,11 @@ CC_FLAGS2=-std=c11 -W -Wall -c
 sources=$(wildcard ./src/*.c)
 objects=$(subst $(SRC), $(OBJ), $(patsubst %.c,%.o,$(sources)))
 
-all: $(PRJ)
+all: folders $(PRJ)
 	@echo "Finished!"
+
+folders:
+	@mkdir -p obj src inc lib
 
 $(PRJ): $(objects)
 	$(CC) $(CC_FLAGS1)    -I $(INC) -L $(LIB) -o ./$(PRJ) $(objects)
@@ -24,7 +27,7 @@ $(PRJ): $(objects)
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CC_FLAGS2) -I $(INC) -L $(LIB) -o $@ $<
 
-.PHONY : clean
+.PHONY : all folders clean
 
 clean:
 	-@rm -f ./$(PRJ)  $(OBJ)/*.o  ./*~ $(INC)/*~ $(LIB)/*~ $(OBJ)/*~ $(SRC)/*~ 
