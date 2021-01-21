@@ -9,14 +9,14 @@
 
 typedef struct{
   char aid[AGENT_MAX_AID], name[AGENT_MAX_NAME], platform[PLAT_MAX_NAME];
-  Queue actives, blockeds;
+  Queue *actives, *blockeds;
 } Agent;
 
 Agent* agent_new(char aid[AGENT_MAX_AID], char name[AGENT_MAX_NAME], char platform[PLAT_MAX_NAME]);
 
 void agent_free(Agent *ag);
 
-void* agent_run(void*);
+void* agent_run(Agent *ag, void*);
 
 void agent_do_delete(Agent *ag);
 

@@ -15,6 +15,8 @@ void beh_free(Beh *b);
 
 void beh_action(Beh *b);
 
+/* Verifies whether the Behaviour is on
+ * Returns: true->ON, false->OFF */
 bool beh_done(Beh *b);
 
 void beh_on_start(Beh *b);

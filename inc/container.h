@@ -15,6 +15,6 @@ Container* container_new(char processId[CONT_MAX_PROC_ID], char name[CONT_MAX_NA
 
 void container_free(Container *cont);
 
-void* container_run(void*);
+void* container_run(Container *cont, void* x);
 
 #endif
