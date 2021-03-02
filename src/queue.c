@@ -1,99 +1,109 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include "queue.h"
 
-QNode* qn_new(void *data, QNode *next){
-  QNode *node = (QNode*) malloc(sizeof(QNode));
-  node->data = data; node->next = next;
+QueueNode* queue_node_new(void *data, QueueNode *next){
+  QueueNode *node = (QueueNode*) malloc(sizeof(QueueNode));
+  node->data = data; node->next = next; node->free = queue_node_free;
   return node;
 }
 
-void qn_free(QNode *node, void (*freeData)(void *data), bool freeNext){
+void queue_node_free(QueueNode *node, void (*freeData)(void *data), unsigned short freeNext){
+  QueueNode *nextNd;
+
   if(node==NULL) return;
-  
-  if(freeData) freeData(node->data);
-  if(freeNext) qn_free(node->next, freeData, freeNext);
-  free(node);
+
+  do{
+    if(freeData) freeData(node->data);
+    nextNd = node->next; free(node); node = nextNd;
+  }while(node && freeNext); 
 }
 
-Queue* q_new(){
+Queue* queue_new(){
   Queue *q = (Queue*) malloc(sizeof(Queue));
-  q->front = q->back = NULL; q->size = 0;
+  q->frontNd = q->backNd = NULL; q->size = 0;
+
+  q->clear = queue_clear;
+  q->free = queue_free;
+  q->empty = queue_empty;
+  q->front = queue_front;
+  q->back = queue_back;
+  q->push = queue_push;
+  q->pop = queue_pop;
+  q->print = queue_print;
+
   return q;
 }
 
-void q_clear(Queue *q, void (*freeData)(void *data)){
+void queue_clear(Queue *q, void (*freeData)(void *data)){
   if(q==NULL) return;
-  qn_free(q->front, freeData, true);
-  q->front = q->back = NULL; q->size = 0;
+  queue_node_free(q->frontNd, freeData, 1);
+  q->frontNd = q->backNd = NULL; q->size = 0;
 }
 
-void q_free(Queue *q, void (*freeData)(void *data)){
+void queue_free(Queue *q, void (*freeData)(void *data)){
   if(q==NULL) return;
-  q_clear(q, freeData);
+  queue_clear(q, freeData);
   free(q);
 }
 
-bool q_is_empty(Queue *q){
+unsigned short queue_empty(Queue *q){
   return (q==NULL || q->size==0);
 }
 
-void* q_front(Queue *q){
-  return q_is_empty(q) ? NULL : q->front->data;
+void* queue_front(Queue *q){
+  return queue_empty(q) ? NULL : q->frontNd->data;
 }
 
-void* q_back(Queue *q){
-  return q_is_empty(q) ? NULL : q->back->data;
+void* queue_back(Queue *q){
+  return queue_empty(q) ? NULL : q->backNd->data;
 }
 
-//Pushes data in the Queue
-void q_push(Queue *q, void *data){
+void queue_push(Queue *q, void *data){
+  QueueNode *node;
+
   if(q==NULL) return;
 
-  QNode *node = qn_new(data, NULL);
+  node = queue_node_new(data, NULL);
 
-  if(q_is_empty(q))
-    q->front = q->back = node;
+  if(queue_empty(q))
+    q->frontNd = q->backNd = node;
   else{
-    q->back->next = node;
-    q->back = node;
+    q->backNd->next = node;
+    q->backNd = node;
   }
 
   q->size++;
 }
 
-/*Removes the data on Queue top
-  freeData: Function to free data.
-    - Case not NULL -> free QNode's data and returns NULL
-    - Case NULL -> doesn't free QNode's data and returns the data*/
-void* q_pop(Queue *q, void (*freeData)(void *data)){
-  if(q_is_empty(q)) return NULL;
+void* queue_pop(Queue *q, void (*freeData)(void *data)){
+  QueueNode *node;
+  void *d;
 
-  QNode *node = q->front;
-  void *d = node->data;
+  if(queue_empty(q)) return NULL;
 
-  q->front = q->front->next;
-  if(q->front==NULL) q->back = NULL;
+  node = q->frontNd;
+  d = node->data;
+
+  q->frontNd = q->frontNd->next;
+  if(q->frontNd==NULL) q->backNd = NULL;
   q->size--;
 
-  qn_free(node, freeData, false);
+  queue_node_free(node, freeData, 0);
 
   return freeData ? NULL : d;
 }
 
-/*Prints entire Queue
-  printData -> function to print Queue's data
-  sep -> Separator between Queue's data */
-void q_print(Queue *q, void (*printData)(void *data), char *sep){
+void queue_print(Queue *q, void (*printData)(void *data), char *sep){
+  QueueNode *node;
+
   if(q==NULL || printData==NULL) return;
-  if(q->size==0){
+  if(queue_empty(q)){
     printf("Empty Queue"); return;
   }
-
-  QNode *node;
-  for(node = q->front;node!=NULL;node=node->next){
-    if(node!=q->front) printf("%s", sep);
+  
+  for(node = q->frontNd;node!=NULL;node=node->next){
+    if(node!=q->frontNd) printf("%s", sep);
     printData(node->data);
   }
 }

@@ -1,26 +1,38 @@
 #ifndef BEH_H
 #define BEH_H
 
-#include <stdbool.h>
-#include "agent.h"
+typedef struct Agent Agent;
 
-//Beh -> Behaviour
-typedef struct{
+/* Beh -> Behaviour */
+typedef struct Beh{
+/* public attributes */
   Agent *myAgent;
+  unsigned short dn;
+
+/* public methods */
+  void (*free)(struct Beh *b);
+  void (*action)(struct Beh *b);
+  unsigned short (*done)(struct Beh *b);
+  void (*on_start)(struct Beh *b);
+  void (*on_end)(struct Beh *b);
 } Beh;
 
 Beh* beh_new(Agent *myAgent);
 
-void beh_free(Beh *b);
+void beh_freeData(void *x);
 
-void beh_action(Beh *b);
+void beh_free(Beh *bh);
 
-/* Verifies whether the Behaviour is on
- * Returns: true->ON, false->OFF */
-bool beh_done(Beh *b);
+void blocked(Beh *bh);
 
-void beh_on_start(Beh *b);
+void unblocked(Beh *bh);
 
-void beh_on_end(Beh *b);
+void beh_action(Beh *bh);
+
+unsigned short beh_done(Beh *bh);
+
+void beh_on_start(Beh *bh);
+
+void beh_on_end(Beh *bh);
 
 #endif

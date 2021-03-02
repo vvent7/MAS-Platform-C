@@ -1,22 +1,39 @@
 #ifndef AGENT_H
 #define AGENT_H
 
-#include "platform.h"
+#include "cstring.h"
 #include "queue.h"
+#include "beh.h"
 
-#define AGENT_MAX_AID 100
-#define AGENT_MAX_NAME 100
-
-typedef struct{
-  char aid[AGENT_MAX_AID], name[AGENT_MAX_NAME], platform[PLAT_MAX_NAME];
+typedef struct Agent{
+/* public attributes */
+  String *aid, *name, *platform;
   Queue *actives, *blockeds;
+  unsigned short start;
+
+/* public methods */
+  void* (*run)(void *arg);
+  void (*add_beh)(struct Agent *this, Beh *bh);
+  void (*blocked)(struct Agent *this, Beh *bh);
+  void (*unblocked)(struct Agent *this, Beh *bh);
+  void (*do_delete)(struct Agent *this);
+  void (*setup)(struct Agent *this);
+  void (*take_down)(struct Agent *this);
+  /* void send(struct Agent *this, Message msg); 
+   * Message receive(struct Agent *this) */
 } Agent;
 
-Agent* agent_new(char aid[AGENT_MAX_AID], char name[AGENT_MAX_NAME], char platform[PLAT_MAX_NAME]);
+Agent* agent_new(String *aid, String *name, String *platform);
 
 void agent_free(Agent *ag);
 
-void* agent_run(Agent *ag, void*);
+void* agent_run(void*);
+
+void agent_add_beh(Agent *ag, Beh *bh);
+
+void agent_blocked(Agent *ag, Beh *bh);
+
+void agent_unblocked(Agent *ag, Beh *bh);
 
 void agent_do_delete(Agent *ag);
 
@@ -24,7 +41,7 @@ void agent_setup(Agent *ag);
 
 void agent_take_down(Agent *ag);
 
-// void send(Message msg);
-// Message receive();
+/* void send(Agent *this, Message msg); 
+ * Message receive(Agent *this) */
 
 #endif
