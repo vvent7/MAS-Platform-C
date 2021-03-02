@@ -35,7 +35,7 @@ void unblocked(Beh *bh){
 }
 
 void beh_action(Beh *bh){
-  printf("Beh of Agent %s: Action %d\n", bh->myAgent->name);
+  printf("Beh of Agent %s: Action\n", *(bh->myAgent->name));
 }
 
 unsigned short beh_done(Beh *bh){
@@ -43,9 +43,9 @@ unsigned short beh_done(Beh *bh){
 }
 
 void beh_on_start(Beh *bh){
-  printf("Beh of Agent %s: On Start\n", bh->myAgent->name);
+  printf("Beh of Agent %s: On Start\n", *(bh->myAgent->name));
 }
 
 void beh_on_end(Beh *bh){
-  printf("Beh of Agent %s: On End\n", bh->myAgent->name);
+  printf("Beh of Agent %s: On End\n", *(bh->myAgent->name));
 }
