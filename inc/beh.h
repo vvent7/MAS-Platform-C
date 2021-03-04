@@ -7,21 +7,22 @@ typedef struct Agent Agent;
 typedef struct Beh{
 /* public attributes */
   Agent *myAgent;
-  unsigned short dn;
+
+/* private methods */
+  void (*blocked)();
+  void (*unblocked)();
 
 /* public methods */
-  void (*free)(struct Beh *b);
-  void (*action)(struct Beh *b);
-  unsigned short (*done)(struct Beh *b);
-  void (*on_start)(struct Beh *b);
-  void (*on_end)(struct Beh *b);
+  void (*action)(struct Beh *bh);
+  unsigned short (*done)(struct Beh *bh);
+  void (*on_start)(struct Beh *bh);
+  void (*on_end)(struct Beh *bh);
 } Beh;
 
-Beh* beh_new(Agent *myAgent);
-
-void beh_freeData(void *x);
-
-void beh_free(Beh *bh);
+Beh* beh_new(Agent *myAgent, void (*action)(struct Beh *bh),
+  unsigned short (*done)(struct Beh *bh),
+  void (*on_start)(struct Beh *bh),
+  void (*on_end)(struct Beh *bh));
 
 void blocked(Beh *bh);
 
