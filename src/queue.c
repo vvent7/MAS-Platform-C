@@ -101,13 +101,13 @@ void* queue_delete(Queue *q, void *dataToDel, unsigned short (*cmp)(void *dataTo
 
   if(queue_empty(q)) return NULL;
 
-  if(cmp ? cmp(dataToDel, q->frontNd) : dataToDel==q->frontNd)
+  if(cmp ? cmp(dataToDel, q->frontNd) : dataToDel==q->frontNd->data)
     return queue_pop(q, freeData);
 
   for(node = q->frontNd;node->next!=NULL;node=node->next){
     QueueNode *nodeNext = node->next;
 
-    if(cmp ? cmp(dataToDel, (d = nodeNext->data)) : dataToDel==nodeNext){
+    if(cmp ? cmp(dataToDel, (d = nodeNext->data)) : dataToDel==nodeNext->data){
       if( (node->next = nodeNext->next) == NULL) q->backNd = node;
       queue_node_free(nodeNext, freeData, 0);
       return freeData ? NULL : d;

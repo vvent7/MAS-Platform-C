@@ -1,7 +1,3 @@
-# Exercício zero (desafio MAKE)
-# Autor: André Cavalcante
-# Data: 10 de maio de 2020
-
 PRJ=$(shell basename $(CURDIR))
 INC=./inc
 LIB=./lib
