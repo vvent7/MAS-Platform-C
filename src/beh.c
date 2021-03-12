@@ -1,30 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "beh.h"
 #include "agent.h"
 
-Beh* beh_new(Agent *myAgent, void (*action)(struct Beh *bh),
-  unsigned short (*done)(struct Beh *bh),
-  void (*on_start)(struct Beh *bh),
+Beh beh_new(Agent *myAgent, void (*action)(struct Beh *bh),
+  char (*done)(struct Beh *bh), void (*on_start)(struct Beh *bh),
   void (*on_end)(struct Beh *bh)){
-  Beh *bh = (Beh*) malloc(sizeof(Beh));
-  bh->myAgent = myAgent;
+  return (Beh){
+    .blocked = beh_blocked, .unblocked = beh_unblocked,
+    .myAgent = myAgent, .action = action, .done = done,
+    .on_start = on_start, .on_end = on_end
+  };
+}
 
-  bh->blocked = blocked;
-  bh->unblocked = unblocked;
+Beh* beh_new_ptr(Agent *myAgent, void (*action)(struct Beh *bh),
+  char (*done)(struct Beh *bh), void (*on_start)(struct Beh *bh),
+  void (*on_end)(struct Beh *bh)){
+  Beh aux = beh_new(myAgent, action, done, on_start, on_end),
+    *bh = (Beh*) malloc(sizeof(Beh));
 
-  bh->action = action;
-  bh->done = done;
-  bh->on_start = on_start;
-  bh->on_end = on_end;
+  memcpy(bh, &aux, sizeof(Beh));
 
   return bh;
 }
 
-void blocked(Beh *bh){
+void beh_blocked(Beh *bh){
   bh->myAgent->blocked(bh->myAgent, bh);
 }
 
-void unblocked(Beh *bh){
+void beh_unblocked(Beh *bh){
   bh->myAgent->unblocked(bh->myAgent, bh);
 }

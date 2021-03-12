@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "agent.h"
+#include <stdlib.h>
+#include <pthread.h>
 
-int main(int argc, char const *argv[]){
-
+int main(){
   
 
   return 0;

@@ -21,11 +21,12 @@ typedef struct Queue{
   void* (*back)(struct Queue *this);
   void (*push)(struct Queue *this, void *data);
   void* (*pop)(struct Queue *this, void (*freeData)(void *data));
+  void* (*delete)(struct Queue *q, void *dataToDel, unsigned short (*cmp)(void *dataToDel, void *queueData),void (*freeData)(void *data));
   void (*print)(struct Queue *this, void (*printData)(void *data), char *sep);
 } Queue;
 
 /* OBS: for all functions with 'freeData' function:
- * freeData: Function to free data. Case NULL -> doesn't free SinglyNode data */
+ * freeData: Function to free data. Case NULL -> doesn't free QueueNode data */
 
 /* Creates new QueueNode */
 QueueNode* queue_node_new(void *data, QueueNode *next);
@@ -55,11 +56,11 @@ void* queue_back(Queue *q);
 /* Pushes data in the Queue */
 void queue_push(Queue *q, void *data);
 
-/* Removes the data on Queue front
- * freeData: Function to free data.
- *   - Case not NULL -> frees QueueNode data and returns NULL
- *   - Case NULL -> doesn't free QueueNode data and returns the data */
+/* Removes the data on Queue front */
 void* queue_pop(Queue *q, void (*freeData)(void *data));
+
+/* Removes the data anywhere in the Queue */
+void* queue_delete(Queue *q, void *dataToDel, unsigned short (*cmp)(void *dataToDel, void *queueData),void (*freeData)(void *data));
 
 /* Prints entire Queue
  * printData -> function to print Queue data

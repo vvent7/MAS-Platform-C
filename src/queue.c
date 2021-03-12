@@ -30,6 +30,7 @@ Queue* queue_new(){
   q->back = queue_back;
   q->push = queue_push;
   q->pop = queue_pop;
+  q->delete = queue_delete;
   q->print = queue_print;
 
   return q;
@@ -92,6 +93,28 @@ void* queue_pop(Queue *q, void (*freeData)(void *data)){
   queue_node_free(node, freeData, 0);
 
   return freeData ? NULL : d;
+}
+
+void* queue_delete(Queue *q, void *dataToDel, unsigned short (*cmp)(void *dataToDel, void *queueData),void (*freeData)(void *data)){
+  QueueNode *node;
+  void *d;
+
+  if(queue_empty(q)) return NULL;
+
+  if(cmp ? cmp(dataToDel, q->frontNd) : dataToDel==q->frontNd)
+    return queue_pop(q, freeData);
+
+  for(node = q->frontNd;node->next!=NULL;node=node->next){
+    QueueNode *nodeNext = node->next;
+
+    if(cmp ? cmp(dataToDel, (d = nodeNext->data)) : dataToDel==nodeNext){
+      if( (node->next = nodeNext->next) == NULL) q->backNd = node;
+      queue_node_free(nodeNext, freeData, 0);
+      return freeData ? NULL : d;
+    }
+  }
+
+  return NULL;
 }
 
 void queue_print(Queue *q, void (*printData)(void *data), char *sep){
