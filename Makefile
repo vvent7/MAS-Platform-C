@@ -5,8 +5,8 @@ OBJ=./obj
 SRC=./src
 
 CC=gcc
-CC_FLAGS1=-std=c11 -W -Wall -pthread
-CC_FLAGS2=-std=c11 -W -Wall -pthread -c
+CC_FLAGS1=-std=c11 -W -Wall -pthread -D_XOPEN_SOURCE=500
+CC_FLAGS2=-std=c11 -W -Wall -pthread -D_XOPEN_SOURCE=500 -c
 
 sources=$(wildcard ./src/*.c)
 objects=$(subst $(SRC), $(OBJ), $(patsubst %.c,%.o,$(sources)))
