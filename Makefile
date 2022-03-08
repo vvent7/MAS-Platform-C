@@ -1,4 +1,4 @@
-PRJ=$(shell basename $(CURDIR))
+PRJ=cmas
 INC=./inc
 LIB=./lib
 OBJ=./obj
